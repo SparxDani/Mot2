@@ -89,12 +89,12 @@ public class PlayerManager : MonoBehaviour
         {
             _canJump = true;
             _hasDoubleJump = true;
-            animator.SetBool("isJumping", false); 
+            animator.SetBool("IsJumping", false); 
         }
         else
         {
             _canJump = false;
-            animator.SetBool("isJumping", true);
+            animator.SetBool("IsJumping", true);
         }
     }
 }
