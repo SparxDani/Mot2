@@ -9,7 +9,8 @@ public class ColorChanger : MonoBehaviour
     public Button redButton;
     public Button blueButton;
     public Button greenButton;
-    // Start is called before the first frame update
+    public HealthManager healthManager;
+
     void Start()
     {
         redButton.onClick.AddListener(SetRedColor);
@@ -41,6 +42,21 @@ public class ColorChanger : MonoBehaviour
         if (ColorUtility.TryParseHtmlString("#00FF6E", out customGreen))
         {
             playerManager.sprite.color = customGreen;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            SpriteRenderer enemySprite = other.GetComponent<SpriteRenderer>();
+            if (enemySprite != null)
+            {
+                if (enemySprite.color != playerManager.sprite.color)
+                {
+                    healthManager.TakeDamage(1);
+                }
+            }
         }
     }
 }
