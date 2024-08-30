@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class ColorChanger : MonoBehaviour
 {
     public PlayerManager playerManager;
@@ -11,12 +13,6 @@ public class ColorChanger : MonoBehaviour
     public Button greenButton;
     public HealthManager healthManager;
 
-    void Start()
-    {
-        redButton.onClick.AddListener(SetRedColor);
-        blueButton.onClick.AddListener(SetBlueColor);
-        greenButton.onClick.AddListener(SetGreenColor);
-    }
 
     public void SetRedColor()
     {

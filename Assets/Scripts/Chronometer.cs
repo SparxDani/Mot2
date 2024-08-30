@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class Chronometer : MonoBehaviour
 {
     public TMP_Text cronometerText;
@@ -29,7 +30,7 @@ public class Chronometer : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(elapsedTime / 60F);
         int seconds = Mathf.FloorToInt(elapsedTime % 60F);
-        int milliseconds = Mathf.FloorToInt((elapsedTime * 1000F) % 1000F);
+        int milliseconds = Mathf.FloorToInt((elapsedTime * 100F) % 100F);
 
         cronometerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
     }
@@ -48,5 +49,10 @@ public class Chronometer : MonoBehaviour
     {
         elapsedTime = 0f;
         UpdateTimerUI();
+    }
+
+    public float GetElapsedTime()
+    {
+        return elapsedTime;
     }
 }

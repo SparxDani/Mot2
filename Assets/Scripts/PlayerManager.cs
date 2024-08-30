@@ -18,6 +18,7 @@ public class PlayerManager : MonoBehaviour
     private float horizontalInput;
 
     public Animator animator;
+    public GameController gameController;
 
     void Start()
     {
@@ -89,12 +90,20 @@ public class PlayerManager : MonoBehaviour
         {
             _canJump = true;
             _hasDoubleJump = true;
-            animator.SetBool("IsJumping", false); 
+            animator.SetBool("IsJumping", false);
         }
         else
         {
             _canJump = false;
             animator.SetBool("IsJumping", true);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Goal"))
+        {
+            gameController.OnPlayerWin();
         }
     }
 }
