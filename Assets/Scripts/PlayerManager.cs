@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    [Header("PlayerStats")]
     public float playerSpeed = 5f;
     public float playerJumpForce = 10f;
+    public float healthAmount = 10f;
+    public int maxHealth = 100;
+    public int currentHealth = 100;
+    public int currentPoints = 0;
+
     public Transform GroundCheck;
     public Rigidbody2D body;
     public float groundCheckDistance = 0.2f;
@@ -25,6 +31,11 @@ public class PlayerManager : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        EventManager.OnPointsUpdated.AddListener(UpdatePoints);
+        EventManager.OnHealthUpdated.AddListener(UpdateHealth);
+        EventManager.OnPlayerDefeated.AddListener(OnPlayerDefeat);
+        EventManager.OnPlayerWon.AddListener(OnPlayerWin);
     }
 
     private void Update()
@@ -99,11 +110,48 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private void UpdatePoints(int points)
+    {
+        currentPoints += points;
+        Debug.Log("Puntaje actualizado: " + currentPoints);
+    }
+
+    private void UpdateHealth(int health)
+    {
+        currentHealth = Mathf.Min(currentHealth + health, maxHealth);
+        Debug.Log("Vida actualizada: " + currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            EventManager.OnPlayerDefeated.Invoke();
+        }
+    }
+
+    private void OnPlayerDefeat()
+    {
+        Debug.Log("¡Jugador derrotado!");
+    }
+
+    private void OnPlayerWin()
+    {
+        Debug.Log("¡Has ganado!");
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Goal"))
         {
-            gameController.OnPlayerWin();
+            EventManager.OnPlayerWon.Invoke();
+        }
+        else if (other.CompareTag("Coin"))
+        {
+            EventManager.OnPointsUpdated.Invoke(10);
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("Heart"))
+        {
+            EventManager.OnHealthUpdated.Invoke(20);
+            Destroy(other.gameObject);
         }
     }
 }
