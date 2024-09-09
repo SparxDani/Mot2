@@ -4,24 +4,32 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+
 public class GameController : MonoBehaviour
 {
     public GameObject resultsScreen;
-    public Chronometer chronometer;
+    public UImanager chronometer;
     public TMP_Text finalTimeText;
     public TMP_Text resultText;
     public GameObject retryButton;
     public GameObject nextLevelButton;
     public GameObject mainMenuButton;
 
-    void Start()
+    private void OnEnable()
     {
-        resultsScreen.SetActive(false);
+        EventManager.OnPlayerWon += OnPlayerWin;
+        EventManager.OnPlayerDefeated += OnPlayerLose;
+    }
+     
+    private void OnDisable()
+    {
+        EventManager.OnPlayerWon -= OnPlayerWin;
+        EventManager.OnPlayerDefeated -= OnPlayerLose;
     }
 
     public void OnPlayerWin()
     {
-        chronometer.StopTimer();
+        chronometer.StopChronometer();
         ShowResultsScreen("LEVEL CLEAR");
         retryButton.SetActive(true);
         nextLevelButton.SetActive(true);
@@ -30,7 +38,7 @@ public class GameController : MonoBehaviour
 
     public void OnPlayerLose()
     {
-        chronometer.StopTimer();
+        chronometer.StopChronometer();
         ShowResultsScreen("BAD");
         retryButton.SetActive(true);
         nextLevelButton.SetActive(false);
@@ -40,12 +48,7 @@ public class GameController : MonoBehaviour
     void ShowResultsScreen(string result)
     {
         resultsScreen.SetActive(true);
-        float elapsedTime = chronometer.GetElapsedTime();
-        int minutes = Mathf.FloorToInt(elapsedTime / 60F);
-        int seconds = Mathf.FloorToInt(elapsedTime % 60F);
-        int milliseconds = Mathf.FloorToInt((elapsedTime * 100F) % 100F);
-
-        finalTimeText.text = string.Format("Final Time: {0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        finalTimeText.text = chronometer.FormatElapsedTime();
         resultText.text = result;
     }
 
@@ -61,14 +64,6 @@ public class GameController : MonoBehaviour
 
     public void GoToMainMenu()
     {
-        SceneManager.LoadScene("MainMenú");
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Goal"))
-        {
-            OnPlayerWin();
-        }
+        SceneManager.LoadScene("MainMenu");
     }
 }
