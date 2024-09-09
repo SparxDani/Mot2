@@ -1,41 +1,34 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 
 public class PlayerManager : MonoBehaviour
 {
     [Header("PlayerStats")]
     public float playerSpeed = 5f;
     public float playerJumpForce = 10f;
-    public float healthAmount = 10f;
     public int maxHealth = 100;
     public int currentHealth = 100;
     public int currentPoints = 0;
+    public float groundCheckDistance;
 
     public Transform GroundCheck;
     public Rigidbody2D body;
-    public float groundCheckDistance = 0.2f;
     public SpriteRenderer sprite;
     public LayerMask groundLayerMask;
-    private bool IsGrounded;
     private bool _Jump;
     private bool _canJump;
     private bool _hasDoubleJump;
     private float horizontalInput;
 
     public Animator animator;
-    public GameController gameController;
 
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-
-        EventManager.OnPointsUpdated.AddListener(UpdatePoints);
-        EventManager.OnHealthUpdated.AddListener(UpdateHealth);
-        EventManager.OnPlayerDefeated.AddListener(OnPlayerDefeat);
-        EventManager.OnPlayerWon.AddListener(OnPlayerWin);
     }
 
     private void Update()
@@ -66,6 +59,8 @@ public class PlayerManager : MonoBehaviour
         {
             _Jump = true;
         }
+
+
     }
 
     private void FixedUpdate()
@@ -110,47 +105,24 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void UpdatePoints(int points)
-    {
-        currentPoints += points;
-        Debug.Log("Puntaje actualizado: " + currentPoints);
-    }
 
-    private void UpdateHealth(int health)
-    {
-        currentHealth = Mathf.Min(currentHealth + health, maxHealth);
-        Debug.Log("Vida actualizada: " + currentHealth);
-
-        if (currentHealth <= 0)
-        {
-            EventManager.OnPlayerDefeated.Invoke();
-        }
-    }
-
-    private void OnPlayerDefeat()
-    {
-        Debug.Log("¡Jugador derrotado!");
-    }
-
-    private void OnPlayerWin()
-    {
-        Debug.Log("¡Has ganado!");
-    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Goal"))
         {
-            EventManager.OnPlayerWon.Invoke();
+            EventManager.PlayerWon();
         }
         else if (other.CompareTag("Coin"))
         {
-            EventManager.OnPointsUpdated.Invoke(10);
+            currentPoints += 10;
+            EventManager.UpdatePoints(currentPoints);
             Destroy(other.gameObject);
         }
         else if (other.CompareTag("Heart"))
         {
-            EventManager.OnHealthUpdated.Invoke(20);
+            currentHealth = Mathf.Min(currentHealth + 20, maxHealth);
+            EventManager.UpdateHealth(currentHealth, maxHealth);
             Destroy(other.gameObject);
         }
     }

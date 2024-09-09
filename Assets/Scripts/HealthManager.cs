@@ -5,28 +5,36 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class HealthManager : MonoBehaviour
 {
-    public Image healthBar;
-    public float healthAmount = 10f;
-    // Start is called before the first frame update
+    public int maxHealth = 100;
+    private int currentHealth;
+
     void Start()
     {
-        
+        currentHealth = maxHealth;
+        EventManager.UpdateHealth(currentHealth, maxHealth); 
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TakeDamage(int damage)
     {
-        /*
-        if (Input.GetKeyDown(KeyCode.Return))
+        currentHealth -= damage;
+        if (currentHealth < 0)
         {
-            TakeDamage(1);
-        }*/
+            currentHealth = 0;
+
+        }
+        EventManager.UpdateHealth(currentHealth, maxHealth); 
+        if (currentHealth == 0)
+        {
+            Die();
+        }
     }
-    public void TakeDamage(float damage)
+
+    private void Die()
     {
-        healthAmount -= damage;
-        healthBar.fillAmount = healthAmount/10f;
+        Destroy(gameObject);
+        EventManager.PlayerDefeated();
     }
 }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
 public class ColorChanger : MonoBehaviour
 {
     public PlayerManager playerManager;
@@ -12,7 +10,6 @@ public class ColorChanger : MonoBehaviour
     public Button blueButton;
     public Button greenButton;
     public HealthManager healthManager;
-
 
     public void SetRedColor()
     {
@@ -50,7 +47,7 @@ public class ColorChanger : MonoBehaviour
             {
                 if (enemySprite.color != playerManager.sprite.color)
                 {
-                    healthManager.TakeDamage(1);
+                    healthManager.TakeDamage(10);
                 }
             }
         }
