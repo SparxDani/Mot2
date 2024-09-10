@@ -1,7 +1,7 @@
  using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -21,8 +21,13 @@ public class PlayerManager : MonoBehaviour
     private bool _canJump;
     private bool _hasDoubleJump;
     private float horizontalInput;
+    private float changeInput;
+
+    public Color[] Colors;
+    public int colorIndex;
 
     public Animator animator;
+    private float jumpInput;
 
     void Start()
     {
@@ -33,7 +38,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
+        //horizontalInput = Input.GetAxis("Horizontal");
 
         if (horizontalInput != 0)
         {
@@ -54,11 +59,15 @@ public class PlayerManager : MonoBehaviour
         {
             sprite.flipX = true;
         }
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (jumpInput == 1)
         {
             _Jump = true;
         }
+        if (changeInput == 1)
+        {
+            ColorChanger();
+        }
+
 
 
     }
@@ -86,7 +95,30 @@ public class PlayerManager : MonoBehaviour
             }
         }
     }
+    
+    public void OnColorChange(InputAction.CallbackContext context)
+    {
+        changeInput = context.ReadValue<float>();
 
+    }
+
+    public void OnMovement(InputAction.CallbackContext context)
+    {
+        horizontalInput = context.ReadValue<float>();
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        jumpInput = context.ReadValue<float>();
+
+    }
+
+    private void ColorChanger()
+    {
+        colorIndex = (colorIndex + 1) % Colors.Length;
+        sprite.color = Colors[colorIndex];
+
+    }
     private void CheckRaycast()
     {
         Debug.DrawRay(GroundCheck.position, Vector2.down * groundCheckDistance, Color.cyan);
@@ -122,8 +154,10 @@ public class PlayerManager : MonoBehaviour
         else if (other.CompareTag("Heart"))
         {
             currentHealth = Mathf.Min(currentHealth + 20, maxHealth);
-            EventManager.UpdateHealth(currentHealth, maxHealth);
+            EventManager.UpdateHealth(currentHealth , maxHealth);
             Destroy(other.gameObject);
         }
     }
+
+
 }

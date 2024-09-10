@@ -10,6 +10,22 @@ public class ColorChanger : MonoBehaviour
     public Button blueButton;
     public Button greenButton;
     public HealthManager healthManager;
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void SetRedColor()
     {
